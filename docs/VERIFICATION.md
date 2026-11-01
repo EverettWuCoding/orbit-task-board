@@ -14,6 +14,12 @@
 - Submission generation: **7-page draft PDF** and editable Word file generated. Independently parsed both documents and verified that the **complete SQL migration** is present, including its final `commit;`.
 - Local Git repository initialized on `main`; assessment PDF, local env files, Python environment and generated private PDF/Word documents confirmed ignored. No remote was created and nothing was published.
 
+### Follow-up cloud verification
+
+The private GitHub repository is now pushed, and a dedicated free Supabase project is connected. Live SDK and real-browser tests passed for anonymous guest separation, session restoration/reload, all six owned tables, cross-guest adversarial operations, atomic rollback, comments, trigger history and Realtime/cross-tab delivery. First GitHub CI run passed. See [CLOUD_HANDOFF.md](CLOUD_HANDOFF.md) for the actual resources and remaining authorization step.
+
+The temporary frontend deployment returned HTTP 403 and expires unless claimed. **Permanent HTTPS frontend hosting and the final Drive/Form handoff remain unverified/incomplete.**
+
 Run `npm run check` and `npm run test:e2e` from the root. Chromium installation is a one-time prerequisite. Browser tests deliberately run in **local demo** mode and never exercise a production database.
 
 Tests include:

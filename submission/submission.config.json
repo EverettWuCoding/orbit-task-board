@@ -3,5 +3,7 @@
   "lastName": "Wu",
   "liveUrl": "",
   "repositoryUrl": "https://github.com/EverettWuCoding/orbit-task-board",
-  "liveVerified": false
+  "liveVerified": false,
+  "cloudVerified": true,
+  "deploymentNotes": "GitHub is pushed and Supabase is configured and verified. A temporary Vercel deployment was created, but its URL returned HTTP 403 and it expires unless claimed. Permanent hosting and a verified reviewer-accessible HTTPS URL remain pending the owner's Vercel sign-in/claim. Do not submit this draft yet."
 }

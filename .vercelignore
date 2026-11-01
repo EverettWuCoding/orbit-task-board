@@ -1,0 +1,21 @@
+# Upload only what the frontend build needs. Never upload private handoff files.
+.git/
+.github/
+.vscode/
+.venv/
+node_modules/
+dist/
+.env
+.env.*
+*.pdf
+*.docx
+submission/
+docs/
+tests/
+e2e/
+scripts/
+supabase/
+playwright-report/
+test-results/
+coverage/
+*.tsbuildinfo

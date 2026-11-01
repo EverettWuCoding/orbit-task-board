@@ -16,3 +16,4 @@ supabase/.branches/
 *.pdf
 submission/*.docx
 submission/*.pdf
+.vercel

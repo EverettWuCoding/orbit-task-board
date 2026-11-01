@@ -18,6 +18,7 @@ const validateUrl = (value, name) => {
 validateUrl(config.liveUrl, 'Live URL');
 validateUrl(config.repositoryUrl, 'Repository URL');
 const draft = !config.firstName?.trim() || !config.lastName?.trim() || !config.liveUrl || !config.repositoryUrl || config.liveVerified !== true;
+const cloudVerified = config.cloudVerified === true;
 const fullName = `${config.firstName || '[First name]'} ${config.lastName || '[Last name]'}`;
 const base = `${safeName(config.firstName, 'firstname')}_${safeName(config.lastName, 'lastname')}_task_manager_assessment`;
 const output = resolve(root, 'submission');
@@ -29,7 +30,8 @@ const sections = [
     'Orbit is a polished, responsive personal Kanban workspace built with React, TypeScript, Vite and Supabase. It has To Do, In Progress, In Review and Done columns, drag-and-drop workflow, detailed task editing and private guest persistence.',
     'The visual direction pairs a deep ink sidebar, cool off-white work surface and restrained lavender accents. System typography, clear hierarchy, useful empty states and carefully designed task cards keep the interface calm and focused.',
     'Supabase is the database and authentication boundary; no separate backend server, paid API, or service-role key is needed. GitHub and free-tier Vercel/Netlify are the intended code-sharing and hosting services.',
-    draft ? 'Deployment status: this is a draft. The local demo is not a cloud guest account and does not satisfy the live hosting requirement. Configure Supabase, publish the owner repository, deploy the app and verify the actual URLs before submitting.' : 'Deployment status: the author has supplied the live app and repository URLs and marked the live acceptance checks complete.',
+    draft ? cloudVerified ? 'Deployment status: this is a draft. The GitHub repository is pushed, and the live Supabase backend is configured and verified. A permanently owned, reviewer-accessible frontend deployment still needs to be completed and verified before submission.' : 'Deployment status: this is a draft. The local demo is not a cloud guest account and does not satisfy the live hosting requirement. Configure Supabase, publish the owner repository, deploy the app and verify the actual URLs before submitting.' : 'Deployment status: the author has supplied the live app and repository URLs and marked the live acceptance checks complete.',
+    ...(config.deploymentNotes ? [String(config.deploymentNotes)] : []),
   ]],
   ['Access links', [
     `Live frontend: ${config.liveUrl || '[PENDING — add the actual deployed HTTPS app URL]'}`,
@@ -65,6 +67,7 @@ const sections = [
     'Automated tests cover domain filters, calendar dates, statistics, task validation, demo persistence, guest sign-in/session reuse, failed optimistic writes, actual PostgreSQL schema/RLS transactions, guest-A/B isolation, ownership spoofing, cross-owner foreign keys, atomic rollback and immutable activity.',
     'Playwright covers desktop and mobile CRUD, comments, history, assignments, multiple labels, filters, list view, persistence, separate local guest contexts and narrow layouts. Desktop tests exercise cross-column pointer dragging, same-column reorder and keyboard shortcuts. Selected screens are checked with axe for WCAG A/AA violations.',
     'Local PostgreSQL tests use PGlite with a minimal Supabase auth.uid() stub. They do not independently verify the external Supabase auth service, project setup, Realtime delivery or hosted deployment.',
+    ...(cloudVerified ? ['Additional live Supabase SDK and browser verification passed: two real anonymous sessions, session restoration and refresh persistence, all six RLS-protected tables, ownership spoofing denial, cross-guest assignment/label/comment rejection, atomic rollback, immutable activity, comment persistence, Realtime delivery and same-guest cross-tab updates. Temporary test records were removed. This confirms the backend and local frontend-to-cloud connection, not the still-pending permanently hosted frontend.'] : []),
     'Before submission: verify two separate live browser guests cannot see each other’s tasks; refresh persistence; cloud comments/history; cross-tab Realtime; production HTTPS loading; healthy free-tier Supabase project; no privileged keys or confidential files in repository history.',
   ]],
   ['Tradeoffs and future improvements', [
