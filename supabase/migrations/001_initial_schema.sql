@@ -1,0 +1,235 @@
+-- Orbit: run this complete migration once in the Supabase SQL Editor.
+-- Anonymous Auth users use the 'authenticated' database role, NOT 'anon'.
+begin;
+
+create table public.team_members (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  name text not null check (char_length(btrim(name)) between 1 and 80),
+  color text not null default '#7962d9' check (color ~ '^#[0-9a-fA-F]{6}$'),
+  created_at timestamptz not null default now(),
+  unique (id, user_id)
+);
+
+create table public.labels (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  name text not null check (char_length(btrim(name)) between 1 and 40),
+  color text not null default '#7962d9' check (color ~ '^#[0-9a-fA-F]{6}$'),
+  created_at timestamptz not null default now(),
+  unique (id, user_id)
+);
+create unique index labels_owner_name on public.labels(user_id, lower(btrim(name)));
+
+create table public.tasks (
+  id uuid primary key default gen_random_uuid(),
+  title text not null check (char_length(btrim(title)) between 1 and 200),
+  status text not null default 'todo' check (status in ('todo', 'in_progress', 'in_review', 'done')),
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  description text not null default '' check (char_length(description) <= 5000),
+  priority text not null default 'normal' check (priority in ('low', 'normal', 'high')),
+  due_date date,
+  assignee_id uuid,
+  position double precision not null default 0 check (position >= 0 and position < 'Infinity'::double precision),
+  unique (id, user_id),
+  foreign key (assignee_id, user_id) references public.team_members(id, user_id) on delete set null (assignee_id)
+);
+
+create table public.task_labels (
+  task_id uuid not null,
+  label_id uuid not null,
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  primary key (task_id, label_id),
+  foreign key (task_id, user_id) references public.tasks(id, user_id) on delete cascade,
+  foreign key (label_id, user_id) references public.labels(id, user_id) on delete cascade
+);
+
+create table public.comments (
+  id uuid primary key default gen_random_uuid(),
+  task_id uuid not null,
+  user_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
+  body text not null check (char_length(btrim(body)) between 1 and 2000),
+  created_at timestamptz not null default now(),
+  foreign key (task_id, user_id) references public.tasks(id, user_id) on delete cascade
+);
+
+create table public.task_activity (
+  id uuid primary key default gen_random_uuid(),
+  task_id uuid not null,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  summary text not null,
+  created_at timestamptz not null default now(),
+  foreign key (task_id, user_id) references public.tasks(id, user_id) on delete cascade
+);
+
+create index tasks_owner_status_position on public.tasks(user_id, status, position);
+create index tasks_assignee_owner on public.tasks(assignee_id, user_id);
+create index members_owner on public.team_members(user_id);
+create index labels_owner on public.labels(user_id);
+create index task_labels_owner on public.task_labels(user_id);
+create index task_labels_label_owner on public.task_labels(label_id, user_id);
+create index comments_task_time on public.comments(task_id, created_at);
+create index comments_owner on public.comments(user_id);
+create index activity_task_time on public.task_activity(task_id, created_at);
+create index activity_owner on public.task_activity(user_id);
+
+alter table public.tasks enable row level security;
+alter table public.team_members enable row level security;
+alter table public.labels enable row level security;
+alter table public.task_labels enable row level security;
+alter table public.comments enable row level security;
+alter table public.task_activity enable row level security;
+
+create policy tasks_owner on public.tasks for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+create policy members_owner on public.team_members for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+create policy labels_owner on public.labels for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+create policy task_labels_owner on public.task_labels for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+create policy comments_owner on public.comments for all to authenticated
+  using ((select auth.uid()) = user_id) with check ((select auth.uid()) = user_id);
+-- Activity is append-only and generated by triggers, never supplied by clients.
+create policy activity_read_owner on public.task_activity for select to authenticated
+  using ((select auth.uid()) = user_id);
+
+revoke all on public.tasks, public.team_members, public.labels, public.task_labels, public.comments, public.task_activity from anon;
+revoke all on public.task_activity from authenticated;
+grant select, insert, update, delete on public.tasks, public.team_members, public.labels, public.task_labels, public.comments to authenticated;
+grant select on public.task_activity to authenticated;
+
+create function public.touch_task() returns trigger
+language plpgsql set search_path = '' as $$
+begin
+  new.updated_at := now();
+  -- Do not let clients change ownership, identity, or the original timestamp.
+  if new.id <> old.id or new.user_id <> old.user_id or new.created_at <> old.created_at then
+    raise exception 'Task identity and ownership are immutable';
+  end if;
+  return new;
+end;
+$$;
+create trigger task_updated before update on public.tasks for each row execute function public.touch_task();
+
+create function public.record_task_activity() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare
+  change_summary text;
+  field_name text;
+  old_status text;
+  new_status text;
+begin
+  if tg_op = 'INSERT' then
+    insert into public.task_activity(task_id, user_id, summary) values (new.id, new.user_id, 'Created this task');
+    return new;
+  end if;
+  foreach field_name in array array['title', 'description', 'status', 'priority', 'due_date', 'assignee_id'] loop
+    if (to_jsonb(old) -> field_name) is distinct from (to_jsonb(new) -> field_name) then
+      change_summary := case field_name
+        when 'title' then 'Changed the title'
+        when 'description' then 'Updated the description'
+        when 'priority' then 'Set priority to ' || new.priority
+        when 'due_date' then case when new.due_date is null then 'Removed the due date' else 'Set due date to ' || new.due_date::text end
+        when 'assignee_id' then case when new.assignee_id is null then 'Unassigned this task' else 'Assigned to ' || coalesce((select name from public.team_members where id = new.assignee_id and user_id = new.user_id), 'team member') end
+        else '' end;
+      if field_name = 'status' then
+        old_status := case old.status when 'todo' then 'To Do' when 'in_progress' then 'In Progress' when 'in_review' then 'In Review' else 'Done' end;
+        new_status := case new.status when 'todo' then 'To Do' when 'in_progress' then 'In Progress' when 'in_review' then 'In Review' else 'Done' end;
+        change_summary := 'Moved from ' || old_status || ' → ' || new_status;
+      end if;
+      insert into public.task_activity(task_id, user_id, summary) values (new.id, new.user_id, change_summary);
+    end if;
+  end loop;
+  return new;
+end;
+$$;
+create trigger task_history after insert or update on public.tasks for each row execute function public.record_task_activity();
+
+create function public.record_label_activity() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare
+  link record;
+  label_name text;
+begin
+  if tg_op = 'DELETE' then link := old; else link := new; end if;
+  -- Deleting a task cascades its links: do not recreate activity for that task.
+  if exists (select 1 from public.tasks where id = link.task_id and user_id = link.user_id) then
+    select name into label_name from public.labels where id = link.label_id and user_id = link.user_id;
+    insert into public.task_activity(task_id, user_id, summary)
+      values (link.task_id, link.user_id, (case when tg_op = 'DELETE' then 'Removed label: ' else 'Added label: ' end) || coalesce(label_name, 'deleted label'));
+  end if;
+  return null;
+end;
+$$;
+create trigger task_label_history after insert or delete on public.task_labels for each row execute function public.record_label_activity();
+
+-- One transaction saves the task and all its labels. SECURITY INVOKER preserves
+-- every RLS check; composite FKs also prevent cross-guest task/member/label links.
+create function public.save_task(p_task jsonb, p_label_ids uuid[], p_is_new boolean)
+returns public.tasks language plpgsql security invoker set search_path = '' as $$
+declare
+  saved public.tasks;
+  v_task_id uuid := (p_task ->> 'id')::uuid;
+  owner uuid := auth.uid();
+begin
+  if owner is null then raise exception 'Authentication required'; end if;
+  if v_task_id is null then raise exception 'A task id is required'; end if;
+  if p_is_new then
+    insert into public.tasks (id, user_id, title, description, status, priority, due_date, assignee_id, position)
+    values (v_task_id, owner, btrim(p_task ->> 'title'), coalesce(p_task ->> 'description', ''),
+      coalesce(p_task ->> 'status', 'todo'), coalesce(p_task ->> 'priority', 'normal'),
+      nullif(p_task ->> 'due_date', '')::date, nullif(p_task ->> 'assignee_id', '')::uuid,
+      coalesce((select max(position) + 1 from public.tasks where user_id = owner and status = coalesce(p_task ->> 'status', 'todo')), 0))
+    returning * into saved;
+  else
+    update public.tasks set title = btrim(p_task ->> 'title'), description = coalesce(p_task ->> 'description', ''),
+      status = p_task ->> 'status', priority = p_task ->> 'priority',
+      due_date = nullif(p_task ->> 'due_date', '')::date, assignee_id = nullif(p_task ->> 'assignee_id', '')::uuid,
+      position = case when status <> (p_task ->> 'status') then coalesce((select max(t.position) + 1 from public.tasks t where t.status = p_task ->> 'status' and t.user_id = owner), 0) else position end
+    where id = v_task_id and user_id = owner returning * into saved;
+    if not found then raise exception 'Task not found or not owned by this guest'; end if;
+  end if;
+  delete from public.task_labels where task_labels.task_id = saved.id and user_id = owner
+    and not (label_id = any(coalesce(p_label_ids, array[]::uuid[])));
+  insert into public.task_labels(task_id, label_id, user_id)
+    select saved.id, label_id, owner from (select distinct unnest(coalesce(p_label_ids, array[]::uuid[])) as label_id) selected
+    on conflict (task_id, label_id) do nothing;
+  return saved;
+end;
+$$;
+
+create function public.move_tasks(p_moves jsonb) returns void
+language plpgsql security invoker set search_path = '' as $$
+declare move jsonb;
+begin
+  if auth.uid() is null then raise exception 'Authentication required'; end if;
+  if jsonb_typeof(p_moves) <> 'array' or jsonb_array_length(p_moves) > 1000 then raise exception 'Invalid move batch'; end if;
+  for move in select * from jsonb_array_elements(p_moves) loop
+    update public.tasks set status = move ->> 'status', position = (move ->> 'position')::double precision
+      where id = (move ->> 'id')::uuid and user_id = auth.uid();
+    if not found then raise exception 'Task not found or not owned by this guest'; end if;
+  end loop;
+end;
+$$;
+
+revoke all on function public.touch_task(), public.record_task_activity(), public.record_label_activity() from public, anon, authenticated;
+revoke all on function public.save_task(jsonb, uuid[], boolean), public.move_tasks(jsonb) from public, anon;
+grant execute on function public.save_task(jsonb, uuid[], boolean), public.move_tasks(jsonb) to authenticated;
+
+-- Subscribe to owned row changes. DELETE events are refreshed through RLS reads.
+do $$
+declare table_name text;
+begin
+  if exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
+    foreach table_name in array array['tasks', 'team_members', 'labels', 'task_labels', 'comments', 'task_activity'] loop
+      if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = table_name) then
+        execute format('alter publication supabase_realtime add table public.%I', table_name);
+      end if;
+    end loop;
+  end if;
+end;
+$$;
+commit;

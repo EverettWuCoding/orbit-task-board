@@ -1,0 +1,18 @@
+node_modules/
+dist/
+.venv/
+.env
+.env.*
+!.env.example
+playwright-report/
+test-results/
+coverage/
+*.tsbuildinfo
+.vercel/
+.netlify/
+supabase/.temp/
+supabase/.branches/
+# The supplied assessment is confidential. Never commit it.
+*.pdf
+submission/*.docx
+submission/*.pdf
