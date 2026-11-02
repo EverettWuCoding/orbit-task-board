@@ -1,13 +1,13 @@
 # Assessment requirements audit and checked checklist
 
-**Audited: November 1, 2026.** Compared against all six pages of the original confidential assessment PDF, actual source/schema, generated deliverables, prior test results and current cloud checks. This is a solution-specific evaluation, not a copy of the assessment.
+**Re-audited: November 2, 2026.** Compared against all six pages of the original confidential assessment PDF, including the exact named hosting services and all advanced-feature bullets. Netlify Free is now the primary host; the audited source repository is public with owner approval. This is an evaluation, not a copy of the confidential assessment.
 
 ## Bottom line
 
 - **Core application and Supabase requirements: implemented.** The local frontend connects to a verified real Supabase database, not just browser storage.
 - **All seven advanced-feature categories: implemented**, with single-assignee/color-initial-avatar scope explained below. Multiple simultaneous assignees and uploaded avatar photos are not implemented.
-- **Application readiness: verified.** The free account-owned [HTTPS frontend](https://everettwucoding.github.io/orbit-task-board-demo/) passed hosted guest isolation, all seven advanced categories, pointer append/reorder and reload persistence. The original CI failure and an additional append-area defect are fixed; Linux CI and Pages deployment passed.
-- **Document readiness: finalized and validated.** The named 7-page PDF and Word file include all seven required content items, real clickable live/source URLs, full SQL and no draft markers. Complete SQL/hyperlink extraction, page bounds and representative visual layouts passed. Private Drive/Form delivery and the owner's human review remain distinct, unperformed actions.
+- **Application readiness: verified on the named host.** The primary [Netlify Free frontend](https://everett-wu-orbit-task-board.netlify.app/) passed hosted guest isolation, all seven advanced categories, pointer append/reorder/reload and Realtime. The [additional fully functioning Pages website](https://everettwucoding.github.io/orbit-task-board-demo/) also passed. No reliance on an unlisted host is needed for assessment compliance.
+- **Document readiness: rewritten and validated for Netlify.** The named **8-page PDF** and Word file include all seven required content items, three accurately labeled clickable URLs (Netlify primary, additional functioning Pages website, public complete source), full SQL and no draft markers. Complete SQL/hyperlink extraction, page bounds and **all eight rendered pages** were reviewed. Drive/Form delivery and the owner's personal review remain unperformed actions.
 - **No mandatory board feature is missing.** Remaining required work is final document inspection and private submission—not another backend or unrelated product enhancements.
 
 ### How to read the boxes
@@ -20,9 +20,9 @@ Detailed owner actions, developer work, acceptance tests and optional enhancemen
 
 - [x] **Supabase database:** dedicated `orbit-task-board` project `ajozwyvyhzrytdhbcttc` exists and currently reports `ACTIVE_HEALTHY`.
 - [x] **Supabase authentication:** real anonymous sign-in enabled; verified with independent SDK/browser guest sessions.
-- [x] **GitHub version control/code sharing:** source pushed to the private [EverettWuCoding/orbit-task-board repository](https://github.com/EverettWuCoding/orbit-task-board), default branch `main`.
+- [x] **GitHub version control/code sharing:** complete [EverettWuCoding/orbit-task-board source](https://github.com/EverettWuCoding/orbit-task-board) is public on `main` after owner approval and full-history audit. Reviewer read/clone access verified without login.
 - [x] **Free-tier provisioning choices:** separate nano Supabase project and free/default organization; no paid addon or paid hosting plan selected by the assistant.
-- [x] **Free frontend hosting:** public compiled assets on GitHub Pages with the included `github.io` URL; no purchased domain, paid hosting upgrade or expiring anonymous deployment. No paid Supabase addon selected; this is not a claim to have audited unrelated account invoices.
+- [x] **Free frontend hosting on a listed service:** Netlify account type `Free`/`credit-free`, no paid trial/payment method, automatic top-ups disabled; public production at its included `netlify.app` URL. No custom domain or paid Supabase addon purchased. This does not certify unrelated account invoices.
 - [x] **Permitted frontend stack:** React + TypeScript web app. React Native and Go are alternatives/options, not additional required implementations.
 - [x] **Permitted backend approach:** direct frontend-to-Supabase access with RLS and SQL RPCs; no separate API server is required.
 - [ ] **Owner time-limit attestation, if requested:** the PDF gives a 3–6-hour estimate and up-to-12-hour guidance. Human development time was not tracked/independently certified; do not invent a duration in the submission.
@@ -200,11 +200,11 @@ Evidence: [header summary](../src/App.tsx), [statistics](../src/lib/domain.ts), 
 ## 7. Hosting, access and security — PDF page 5
 
 - [x] Frontend host configuration supplied for Vercel and Netlify; Cloudflare Pages is an alternative, not a third required deployment.
-- [x] **Reviewer-accessible live frontend on a free service:** https://everettwucoding.github.io/orbit-task-board-demo/ — enforced HTTPS, public compiled assets, no host login/domain purchase. The PDF lists free hosting examples, not a prohibition on equivalent free static hosting.
+- [x] **Reviewer-accessible primary frontend on the explicitly named Netlify service:** https://everett-wu-orbit-task-board.netlify.app/ — Free, public production, no host login/domain purchase. The retained GitHub Pages website is clearly additional; no interpretation that an unlisted host is equivalent is required.
 - [x] Supply the **verified account-owned live URL** in submission config/generator. Final artifact validation is performed after regeneration.
-- [x] GitHub repository exists, private as permitted by the PDF, and contains pushed source.
+- [x] GitHub repository is now public with explicit owner approval, contains complete source and allows anonymous reviewer read/clone access; full-history audit found no confidential documents or privileged credential patterns.
 - [x] Actual repository URL prepared in submission config/document.
-- [ ] **Deliver repository URL directly to reviewer** through the specified handoff. No submission has been sent. The PDF says collaborators need not be added; do not assume a private URL changes GitHub's visibility rules. If the actual reviewer cannot open it, resolve access through the assessment's stated process before altering visibility.
+- [ ] **Deliver repository URL to reviewer** in the final PDF/Form. Public access is resolved; actual submission has not been sent. Do not publicly post the final document/submission link merely because source access is public.
 - [x] Full SQL schema prepared in final document, including tables, checks, RLS, indexes, triggers, functions and grants.
 - [ ] **Actually share the schema/document** with the reviewer through final submission.
 - [x] No Supabase service-role/secret key used in the frontend; public anon key only.
@@ -212,7 +212,7 @@ Evidence: [header summary](../src/App.tsx), [statistics](../src/lib/domain.ts), 
 - [x] No reviewer Supabase membership invitation needed; schema sharing is the chosen supported method.
 - [x] Database structure screenshot **not necessary** because full SQL is included; optional only.
 
-Evidence: [working Pages frontend](https://everettwucoding.github.io/orbit-task-board-demo/), [hosting record](CLOUD_HANDOFF.md), [Git ignore](../.gitignore), [upload exclusions](../.vercelignore), [submission config](../submission/submission.config.json), [generated PDF](../submission/everett_wu_task_manager_assessment.pdf).
+Evidence: [primary Netlify frontend](https://everett-wu-orbit-task-board.netlify.app/), [additional functioning website](https://everettwucoding.github.io/orbit-task-board-demo/), [hosting record](CLOUD_HANDOFF.md), [Git ignore](../.gitignore), [submission config](../submission/submission.config.json), [generated PDF](../submission/everett_wu_task_manager_assessment.pdf).
 
 ## 8. Final document and submission — PDF pages 5–6
 
@@ -227,8 +227,8 @@ Evidence: [working Pages frontend](https://everettwucoding.github.io/orbit-task-
 - [x] Advanced features and how they work, including honest single-assignee/guest-roster scope.
 - [x] Tradeoffs and future improvements.
 - [x] Named PDF and editable Word generation available; no duplicate source assessment needs to be submitted.
-- [x] Finalize and regenerate existing named PDF/Word: actual URL, fresh verification, accurate GitHub Pages setup and no obsolete hosting-blocker narrative or DRAFT/PENDING markers; independent content/link/full-SQL checks passed.
-- [x] Inspect representative rendered PDF pages and check all text blocks remain within page bounds. SQL and both real hyperlinks are present in PDF and Word; primary PDF has seven pages.
+- [x] Update final PDF/Word source for Netlify primary, additional functioning Pages website, public complete source and fresh verification. Regeneration/content/hyperlink/SQL checks are required before copying the replacement into Downloads.
+- [x] Inspect all eight rendered PDF pages and verify every text block remains within page bounds. Complete SQL and all three real hyperlinks are present in PDF and Word, with distinct primary/additional-demo/source labels.
 - [ ] Human visual review of the final PDF/Word: link clicks, readable SQL, no clipped pages, correct name, complete contents.
 - [ ] Choose **one** PDF or Word document to submit, not both plus source PDF.
 - [ ] Upload chosen finished document to Google Drive.
@@ -243,7 +243,7 @@ The provided PDF does not contain the actual Google Form URL or detailed permiss
 
 - [x] Original assessment PDF remains local and ignored; not in GitHub, public assets or deployment upload.
 - [x] Final-document PDFs/Word files and private deployment-claim links not committed/published.
-- [x] Repository remains private; no public profile/social promotion performed.
+- [x] Only audited source/website assets are public with owner approval; confidential PDF/private final document and submission link are not posted to profiles/social sites.
 - [ ] At handoff, upload **only the finished solution document**, never the source assessment PDF.
 - [ ] Keep the final submission/document link off LinkedIn, public GitHub profile pages, personal sites and other public platforms.
 - [x] Resume demo-link inclusion is **permitted, not required**; only use a working demo URL, not the confidential assessment/document link.
@@ -259,16 +259,16 @@ The provided PDF does not contain the actual Google Form URL or detailed permiss
 | Security awareness | Public-key-only client, owner checks, private files ignored | Preserve RLS, confirm hosting upload/billing and reviewer access; no token sharing |
 | Advanced features | All seven present; single-assignee boundary explicit | Multi-assignee/avatar uploads optional; don't claim missing capabilities |
 | Code quality | Strict TS, modular repository/domain structure, tests, two successful CI runs | Optional cleanup/concurrency/accessibility refinements; not full certification |
-| Live app execution | **Verified:** free account-owned Pages frontend; real hosted guest/feature/reorder tests passed | Keep Supabase active and review once personally before sharing |
+| Live app execution | **Verified:** Netlify Free primary plus additional Pages website; actual hosted guest/advanced/pointer checks passed on both | Keep Supabase active and review once personally before sharing |
 | Final document clarity | Named PDF/Word finalized and independently checked; all seven required contents, no draft markers | Owner personally inspects and privately delivers one document |
 
 ## Evidence freshness
 
 - Application-fix commit `8a95f27` has a successful [GitHub Linux CI run](https://github.com/EverettWuCoding/orbit-task-board/actions/runs/41400882418); the [fixed Pages deployment](https://github.com/EverettWuCoding/orbit-task-board-demo/actions/runs/41400943222) also passed.
-- Last local full check: lint/build and **48 unit/database/collision tests** passed; **18** use actual PostgreSQL SQL/roles.
-- Browser suite: **20 passed**, **4 intentionally skipped** mobile physical-input scenarios, zero local retries; **10 targeted append/reorder/cancel repetitions** passed. Selected-screen axe checks passed; not complete accessibility/device certification.
+- November 2 local rerun: lint/build passed; **48 unit/database/collision tests** passed serially; **18** execute actual PostgreSQL SQL/roles. Initial parallel worker startup timed out before five test files could run.
+- Browser rerun: **20 passed**, **4 intentionally skipped** mobile physical-input cases, zero retries, one worker with a **90-second scenario budget**. Initial 30-second runs timed out in startup/axe; assertions and coverage unchanged. Earlier 10 targeted drag repetitions and Linux CI passed. Not full physical-device/AT certification.
 - Prior live SDK/browser scripts verified real Supabase guest isolation/persistence/Realtime; this audit rechecked live project health, task column definitions and six-table RLS without creating new guest test data.
 - The named final PDF/Word is regenerated and checked for author, both real hyperlinks, full SQL, required headings and absence of obsolete DRAFT/PENDING markers before final handoff.
-- The historical temporary frontend is unavailable and is not the final demo URL. Use only https://everettwucoding.github.io/orbit-task-board-demo/.
+- The historical temporary Vercel URL is not usable. Primary submission URL is https://everett-wu-orbit-task-board.netlify.app/; the GitHub Pages URL is an optional additional fully functioning website.
 
 This checklist is an evidence-based snapshot. **Required blocker list and optional development work are separated in [REMAINING_WORK.md](REMAINING_WORK.md).**

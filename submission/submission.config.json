@@ -1,9 +1,10 @@
 {
   "firstName": "Everett",
   "lastName": "Wu",
-  "liveUrl": "https://everettwucoding.github.io/orbit-task-board-demo/",
+  "liveUrl": "https://everett-wu-orbit-task-board.netlify.app/",
+  "additionalDemoUrl": "https://everettwucoding.github.io/orbit-task-board-demo/",
   "repositoryUrl": "https://github.com/EverettWuCoding/orbit-task-board",
   "liveVerified": true,
   "cloudVerified": true,
-  "deploymentNotes": "The live frontend is hosted free on GitHub Pages under an account-owned github.io URL; no purchased domain is required. The full source repository remains private. A separate public repository contains only compiled website assets, not the confidential assessment or submission documents. Hosted guest isolation, refresh persistence, all seven advanced-feature categories, actual pointer moves/reordering and same-guest Realtime were verified after the fixes."
+  "deploymentNotes": "The primary frontend is hosted on Netlify Free, one of the hosting services explicitly named in the assessment, at an account-owned HTTPS netlify.app address. No domain purchase is required. Production is public without a Netlify login; previews remain private. The source GitHub repository is public after a full-history confidential-file and credential-pattern audit, so reviewers can read and clone it without an invitation. The GitHub Pages URL is retained as an additional fully functioning website, not a substitute for the primary Netlify deployment. Both websites passed hosted guest isolation, persistence, all seven advanced-feature categories, actual pointer moves/reordering and same-guest Realtime verification. No assessment PDF or private handoff document is published."
 }

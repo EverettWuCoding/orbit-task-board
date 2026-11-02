@@ -1,6 +1,6 @@
 # Exhaustive remaining work: owner actions vs implementation
 
-**Audit date: November 1, 2026.** Scope: every requirement and advanced-feature bullet in the original PDF, plus concrete quality limitations visible in the existing implementation. This is not an invitation to add an unlimited list of unrelated product features.
+**Updated November 2, 2026.** Owner approved assessment/handoff concerns only, public source after full-history audit and Netlify Free. No optional feature/reliability backlog expansion was authorized in this step.
 
 Full checked requirement matrix: [REQUIREMENTS.md](REQUIREMENTS.md).
 
@@ -8,7 +8,7 @@ Full checked requirement matrix: [REQUIREMENTS.md](REQUIREMENTS.md).
 
 **The mandatory application and all seven advanced categories are implemented and verified on the live HTTPS site. The reorder notification is fixed: local tests and Linux CI pass, and the repaired app is redeployed.**
 
-Completed: account-owned free [GitHub Pages frontend](https://everettwucoding.github.io/orbit-task-board-demo/), cloud guest isolation/persistence, all advanced UI categories, actual hosted pointer append/reorder, source CI and live deployment. The existing document now has the actual live URL and is finalized/validated during this handoff.
+Completed: primary [Netlify Free frontend](https://everett-wu-orbit-task-board.netlify.app/) on an explicitly named host, additional [fully functioning Pages website](https://everettwucoding.github.io/orbit-task-board-demo/), publicly readable/clonable full source after audit, real hosted guest isolation and all seven advanced categories/pointer/reload checks on both sites. Netlify Free/no trial/no payment method/top-ups disabled verified; production made public by owner, previews kept private.
 
 **Remaining required owner steps:** personally inspect the live app/document, upload **one** finished file to Drive, apply the actual invitation's permissions, submit its Google Form and retain confirmation. No submission has been sent. The old temporary Vercel site is historical/unusable; no Vercel login/domain purchase is needed now.
 
@@ -16,8 +16,8 @@ Completed: account-owned free [GitHub Pages frontend](https://everettwucoding.gi
 
 ### A1. Free hosting — completed
 
-- [x] Used existing GitHub account access for free Pages hosting; no additional host login is needed.
-- [x] Separate public repository contains only compiled assets; full source/assessment/document remain private or local as appropriate.
+- [x] Owner authorized Netlify Free; primary site deployed and public production verified, resolving the listed-host concern.
+- [x] Full source public with owner approval after complete historical audit; confidential PDF/private handoff documents stay local/ignored. Separate Pages repository contains compiled assets only.
 - [x] HTTPS site is account-owned, built and reviewer-accessible without host login; no custom domain or paid hosting addon selected.
 - [x] Supabase Site URL updated and actual hosted guest/feature/pointer persistence verified.
 - [x] Old temporary claim/login is no longer needed. Never share credentials or private claim links if managing any service later.
@@ -38,7 +38,7 @@ Completed: account-owned free [GitHub Pages frontend](https://everettwucoding.gi
 - [ ] Upload the chosen final document to your Google Drive. Google login/permission consent must happen directly in your account; the assistant can help navigate once access is available.
 - [ ] Set exactly the reviewer-readable permissions requested by the form, without allowing editing unless explicitly requested.
 - [ ] Test the Drive link with a fresh/reviewer-like session so the recipient can read/download the document without using your account.
-- [ ] Provide the actual GitHub URL directly in the document/form. The PDF permits a private repository and says collaborators are unnecessary; verify the intended review process rather than assuming a private URL grants visibility automatically.
+- [x] Resolve source reviewer access: actual complete-source URL is public and anonymous HTTP200 verified. Include it in final document; actual Form delivery remains open.
 - [ ] Complete the Google Form with the Drive document link and all invitation-required fields; perform the final submission/consent in your own account and save confirmation.
 - [ ] Never upload the original confidential assessment PDF. Keep the final submission link off public profiles, social media and personal websites.
 
@@ -46,12 +46,12 @@ Completed: account-owned free [GitHub Pages frontend](https://everettwucoding.gi
 
 | Priority / open item | Owner dependency | Completion condition |
 | --- | --- | --- |
-| [x] Create/link account-owned host | Existing GitHub access | Free Pages project, not expiring anonymous deployment |
+| [x] Create/link account-owned named host | Owner Netlify authorization | Netlify Free, no paid trial/top-up, public production and private previews |
 | [x] Deploy audited built assets | Host access | Successful fixed app deployment, no confidential PDF/document/env metadata |
 | [x] Configure public Supabase build variables | Build environment | Correct project URL/public key, no service-role credential |
 | [x] Verify public HTTPS frontend | Live URL | Fresh visitors load Orbit and real guest sessions, no host login |
 | [x] Preserve RLS and accessible demo | Site/database settings | Frontend public; data remains owner-private |
-| [x] Record stable canonical URL | Successful deployment | https://everettwucoding.github.io/orbit-task-board-demo/ |
+| [x] Record canonical and additional website URLs | Successful deployment | Netlify primary; GitHub Pages additional functioning website |
 | [x] Update Supabase Site URL | Final domain | Declared hosted origin with localhost redirects retained |
 | [x] Repeat hosted automated acceptance | Live URL | Guests, all seven advanced categories, pointer append/reorder/reload and Realtime passed |
 | [x] Set live URL/verification config | Hosted checks passed | Actual checks completed, not only CLI “Ready” |
@@ -165,7 +165,7 @@ Do not disable required guest RLS or upgrade to paid services just to silence ad
 
 ## G. Things you do not need to redo or add
 
-- [x] Private GitHub repository already created and pushed; latest committed CI run succeeded.
+- [x] Complete source GitHub repository pushed and now public with owner approval after historical audit; reviewer read/clone access resolved.
 - [x] Dedicated Supabase project already created, healthy, connected; all required fields and RLS verified.
 - [x] No need to provide a Supabase service-role key, database password or access token to the frontend/assistant.
 - [x] No need to add Go or React Native; React/TypeScript web frontend is an allowed choice.
@@ -178,7 +178,7 @@ Do not disable required guest RLS or upgrade to paid services just to silence ad
 
 ## Recommended order
 
-1. **Completed:** free Pages deployment, correct public build variables/auth origin, live all-category acceptance, pointer fixes and successful Linux CI.
+1. **Completed:** primary Netlify Free deployment, owner-approved public production, correct build variables/auth origin, public complete source, all-category hosted acceptance on both Netlify and the additional Pages site.
 2. **Completed in this handoff:** update final document source with verified URL/results, regenerate and validate existing named artifacts; keep private files excluded.
 3. **Owner:** personally review hosted features and final PDF. Extra multi-assignee/production polish is optional, not a prerequisite to handoff.
 4. **Owner:** privately upload **one** final document, test the exact invitation's Drive permissions, submit the actual Form and save confirmation.

@@ -12,14 +12,16 @@
 - Axe checks: **passed** on board, task creation dialog and quick guide in both browser profiles; the built desktop board also passed.
 - Production-bundle smoke: **passed** with no page runtime/network failures; measured **360, 768, 1024 and 1440px** layouts without page-level horizontal overflow; mobile creation/status and refresh persistence verified.
 - Dependency audit: **0 known vulnerabilities** across installed runtime and development dependencies at the time of verification.
-- Submission generation: **named 7-page final PDF and editable Word file regenerated and validated**. Both contain full migration SQL, all required sections, real clickable live/source links and no DRAFT/PENDING markers. Representative rendered pages and page-bound checks passed. Private Drive/Form delivery remains an owner action.
-- Private GitHub repository pushed on `main`; assessment PDF, local env files, Python environment and generated private PDF/Word documents confirmed ignored and absent from Git history's file paths.
+- Submission generation: **named 8-page Netlify handoff PDF and editable Word regenerated and validated**. Both contain full migration SQL, every required section, three accurately labeled real hyperlinks and no DRAFT/PENDING markers. All eight PDF pages were rendered/reviewed; page-bound and complete-SQL checks passed. Private Drive/Form delivery remains an owner action.
+- Complete source is public on `main` with owner approval following a full-history audit (6 commits/83 unique blobs before visibility change; no confidential paths/private credential patterns). Anonymous reviewer access is verified; confidential assessment, local env and private documents remain excluded.
 
 ### Follow-up cloud verification
 
-The private GitHub repository is pushed, and a dedicated free Supabase project is connected. After the regression fixes, live SDK and actual HTTPS browser checks passed for anonymous guest separation, session/reload, all six owned tables, cross-guest adversarial operations, atomic rollback, all seven advanced categories and Realtime/cross-tab delivery. Actual pointer cross-column moves, blank-column appends and same-column reorder persist after reload. Temporary application test data was removed. Application fix [8a95f27 passed Linux CI](https://github.com/EverettWuCoding/orbit-task-board/actions/runs/41400882418); the [updated Pages deployment](https://github.com/EverettWuCoding/orbit-task-board-demo/actions/runs/41400943222) also passed. See [CLOUD_HANDOFF.md](CLOUD_HANDOFF.md).
+The source repository is public and the dedicated Supabase project is connected. The complete live SDK check and expanded hosted browser check passed again on November 2. Both the primary Netlify URL and additional Pages website passed guest separation, session/reload, all seven advanced categories, real pointer append/reorder and same-guest Realtime. Adversarial SDK checks protect all six owned tables and reject spoofed/cross-owner links. Temporary application rows were removed. Earlier fixed-app Linux CI and Pages deployment passed; latest handoff-source CI is checked separately. See [CLOUD_HANDOFF.md](CLOUD_HANDOFF.md).
 
-**Verified live frontend: https://everettwucoding.github.io/orbit-task-board-demo/** — free account-owned HTTPS Pages site, not the old expiring Vercel URL. Hosting and hosted acceptance are complete; **private Google Drive/Form submission has not been performed**. The full PDF-derived checklist is [REQUIREMENTS.md](REQUIREMENTS.md); remaining owner/optional work is [REMAINING_WORK.md](REMAINING_WORK.md).
+**Verified primary: https://everett-wu-orbit-task-board.netlify.app/** on Netlify Free, explicitly named in the PDF. **Additional functioning website: https://everettwucoding.github.io/orbit-task-board-demo/**. Production is public without Netlify login; previews remain private. All four Netlify security headers were checked by anonymous HTTP200 response. **Private Google Drive/Form submission has not been performed.**
+
+**Local rerun conditions:** parallel Vitest workers failed startup, then all 48 tests passed with `--maxWorkers=1`. Browser startup/axe scans exceeded 30 seconds; the unchanged suite passed with `--workers=1 --retries=0 --timeout=90000` (20 passed, 4 explicit skips). No assertion or test was removed. An optional standalone hosted smoke browser failed to launch on this machine and is not counted as a pass; the full local axe browser suite and full hosted functional suites passed. Lint/build passed; audit reported zero known vulnerabilities.
 
 Run `npm run check` and `npm run test:e2e` from the root. Chromium installation is a one-time prerequisite. Browser tests deliberately run in **local demo** mode on their own port 5180 and never reuse a cloud-configured development server. Explicit live verification scripts are separate and clean temporary application records.
 
@@ -78,14 +80,14 @@ These live SDK checks were completed with [verify-supabase](../scripts/verify-su
 ### Hosting, accessibility and handoff
 
 - [x] GitHub repository contains intended source; confidential PDF, local env and generated private documents are ignored and absent from Git history file paths; prior staged secret checks passed.
-- [x] GitHub Pages free public-assets hosting is built successfully; private source CI installs the lockfile and checks the production build.
+- [x] Netlify Free primary production is public and ready; included subdomain, no paid trial/payment method or automatic top-ups. Pages is retained as additional functioning demo. Public source CI installs the lockfile and checks the build.
 - [x] HTTPS live URL loads in fresh browser contexts; hosted smoke passed no page/asset errors and selected axe/360px layout checks.
 - [x] Keyboard creation, drag/status alternatives and dialog initial focus implemented; desktop automated checks passed. Reduced-motion styles provided.
 - [ ] Final manual keyboard/focus/assistive-technology review on hosted domain; ARIA tab-pattern improvements are optional backlog, not certified complete.
 - [ ] Actual phone touch drag and form behavior verified; narrow page has no horizontal overflow.
 - [x] Actual anonymous signup works with current Supabase settings; frontend has no CAPTCHA integration. Do not enable mandatory CAPTCHA without implementing it.
 - [x] Name and actual GitHub URL supplied in submission config.
-- [x] Account-owned Pages live URL and confirmed hosted verification supplied in submission config.
+- [x] Primary Netlify, additional Pages website and public source URLs supplied distinctly in submission config; actual live checks completed on both websites.
 - [x] Final PDF/Word contents and hyperlinks independently parsed; full SQL present, no draft markers, rendered overview/features/schema/end pages reviewed without clipping.
 - [ ] Owner personally reviews the final named document before uploading.
 - [ ] Final document shared through the requested private Drive/Form process only.

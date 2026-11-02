@@ -11,6 +11,27 @@
 			],
 			"isBackground": true,
 			"problemMatcher": []
+		},
+		{
+			"label": "Orbit: Netlify production deployment",
+			"type": "shell",
+			"command": "npx.cmd",
+			"args": [
+				"--yes",
+				"netlify-cli@latest",
+				"deploy",
+				"--dir",
+				"dist",
+				"--prod",
+				"--no-build",
+				"--site",
+				"5f00075c-6f4f-4f9a-af7d-8315ab02e2a7",
+				"--message",
+				"Verified static frontend for assessment",
+				"--json"
+			],
+			"isBackground": false,
+			"problemMatcher": []
 		}
 	]
 }

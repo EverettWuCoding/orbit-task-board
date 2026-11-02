@@ -2,11 +2,12 @@
 
 ## Working URLs and completed setup
 
-- **Live frontend:** https://everettwucoding.github.io/orbit-task-board-demo/ — account-owned GitHub Pages project site, public HTTPS, free GitHub subdomain. No domain purchase, Vercel account, bypass token or one-hour expiry is involved.
-- **Full source:** https://github.com/EverettWuCoding/orbit-task-board — private repository on `main`; code, migrations, tests and documentation are pushed. Confidential assessment, generated handoff documents and local credentials are excluded.
+- **Primary live frontend:** https://everett-wu-orbit-task-board.netlify.app/ — account-owned **Netlify Free**, explicitly listed in the assessment. Team plan `credit-free` verified, 300 included credits, no Pro/Enterprise trial, no payment method, automatic top-ups disabled. No custom domain purchased. Production is public; previews retain team-login protection.
+- **Additional fully functioning website:** https://everettwucoding.github.io/orbit-task-board-demo/ — retained GitHub Pages demo, not a substitute for the primary listed host. Browser-held guest sessions are separate across these two origins.
+- **Full source:** https://github.com/EverettWuCoding/orbit-task-board — now **public** with owner approval, after scanning all 6 existing commits and 83 unique historical blobs for confidential paths/private credential patterns and service-role JWTs; zero findings. Anonymous HTTP200/read/clone access resolves reviewer access. Confidential assessment, generated handoff documents and local credentials remain excluded.
 - **Assets-only host:** https://github.com/EverettWuCoding/orbit-task-board-demo — public `.nojekyll`, HTML, favicon and compiled JS/CSS only. No assessment PDF, submission document/link, private environment file, SQL source or privileged key.
 - **Supabase:** https://supabase.com/dashboard/project/ajozwyvyhzrytdhbcttc — dedicated nano project in the separate `Orbit Assessment` organization. Existing projects unchanged; no paid addon selected.
-- **Database/auth:** six owner-RLS tables, required task fields, same-owner foreign keys, atomic save/move RPCs and server history; anonymous Auth and Realtime enabled. Site URL points to Pages, with localhost allowed for development.
+- **Database/auth:** six owner-RLS tables, required task fields, same-owner foreign keys, atomic save/move RPCs and server history; anonymous Auth and Realtime enabled. Site URL is Netlify; the additional Pages demo and localhost remain allowed. No application schema or optional feature expansion was needed.
 - **Hosted acceptance:** independent guests, session/reload persistence, all seven advanced categories, saved comments/history, combined filters, urgency/stats, actual cross-column pointer moves, column-whitespace appends, persisted same-column reorder and same-guest cross-tab Realtime passed. Temporary application rows removed; test Auth identities may remain.
 
 ## Failure notification: fixed and independently verified
@@ -19,11 +20,21 @@ Extended hosted coverage also found a genuine append-area issue: generic nearest
 - Updated compiled Pages deployment: https://github.com/EverettWuCoding/orbit-task-board-demo/actions/runs/41400943222 — **success**.
 - Local checks: **48 unit/database passed; 20 browser passed; 4 intentional mobile physical-input skips; 10 targeted append/reorder/cancel repetitions passed without retries; production smoke passed; audit 0 known vulnerabilities**.
 
+### November 2 Netlify handoff verification
+
+- Site `5f00075c-6f4f-4f9a-af7d-8315ab02e2a7`, production deploy `6ae8d8cba9883f37baa44571`, state **ready**, no deploy expiry.
+- Owner completed Netlify authorization and explicitly made production public. Fresh browser/HTTP requests now reach Orbit, not the initial default private-project login gate. Site-login scope is `non_production`; unrelated team defaults and Supabase RLS were not changed.
+- All seven advanced categories and actual pointer cross-column/append/reorder/reload workflows passed on **both** Netlify and Pages; independent guests, comments/activity and same-guest realtime verified. Temporary application records removed.
+- The full 48-test suite passed serially; all 20 browser scenarios passed with 4 explicit mobile skips, one worker, zero retries and `--timeout=90000`. Initial local parallel worker/30-second runs timed out; no assertions were removed and no application behavior changed to hide them. A separate optional headless-shell smoke failed to launch its browser on this machine; it is not counted as a pass. Existing local axe workflow tests passed on the completed rerun.
+- Lint and production build passed; runtime/development dependency audit found 0 known vulnerabilities. Netlify serves the configured `nosniff`, frame denial, referrer and permissions headers. No paid upgrade/addon selected.
+
 ## Deployment maintenance
 
-Build with both **public** Supabase variables available at build time and `npm run build -- --base=/orbit-task-board-demo/`. Copy only the built frontend to the separate assets repository, preserve `.nojekyll`, remove superseded chunks and push its `main`. Pages deploys automatically. Private-source-to-public-assets continuous deployment is not implemented; pushing source alone does not publish new assets.
+**Primary Netlify:** build with both public Supabase variables and `npm run build`; publish only `dist` using the linked Netlify site and supplied [netlify.toml](../netlify.toml). This handoff used an audited manual CLI production upload (`--no-build` only after a successful local build). No automatic source-to-Netlify deploy integration is claimed. Preserve public **production** access and Free plan/disabled top-ups; do not make previews public unnecessarily.
 
-The earlier anonymous Vercel attempt is historical and unusable. Do not put its temporary URL or private claim link in the final document. Use the verified Pages URL above.
+**Additional Pages demo:** build with `npm run build -- --base=/orbit-task-board-demo/`, copy only built assets plus `.nojekyll` to its separate public repository and push. The two builds have different base paths and must not be interchanged. No source-to-assets automatic publication is claimed.
+
+The earlier anonymous Vercel attempt is historical and unusable. Do not put its temporary URL or private claim link in the final document. The new primary URL is Netlify; Pages is an optional additional functioning website.
 
 ## Remaining owner handoff
 

@@ -16,6 +16,7 @@ const validateUrl = (value, name) => {
   if (url.protocol !== 'https:' || url.username || url.password) throw new Error(`${name} must be an HTTPS URL without embedded credentials.`);
 };
 validateUrl(config.liveUrl, 'Live URL');
+validateUrl(config.additionalDemoUrl, 'Additional demo URL');
 validateUrl(config.repositoryUrl, 'Repository URL');
 const draft = !config.firstName?.trim() || !config.lastName?.trim() || !config.liveUrl || !config.repositoryUrl || config.liveVerified !== true;
 const cloudVerified = config.cloudVerified === true;
@@ -29,14 +30,15 @@ const sections = [
   ['Solution overview', [
     'Orbit is a polished, responsive personal Kanban workspace built with React, TypeScript, Vite and Supabase. It has To Do, In Progress, In Review and Done columns, drag-and-drop workflow, detailed task editing and private guest persistence.',
     'The visual direction pairs a deep ink sidebar, cool off-white work surface and restrained lavender accents. System typography, clear hierarchy, useful empty states and carefully designed task cards keep the interface calm and focused.',
-    'Supabase is the database and authentication boundary; no separate backend server, paid API, or service-role key is needed. GitHub provides source version control, and GitHub Pages hosts the compiled frontend free over HTTPS. No custom domain purchase is needed.',
+    'Supabase provides the database and anonymous authentication. GitHub provides public source version control and code review access. The primary frontend is hosted on Netlify Free, one of the assessment’s named hosting services, with its included HTTPS netlify.app address. No domain purchase, paid backend or service-role key is needed.',
     draft ? cloudVerified ? 'Deployment status: this is a draft. The GitHub repository is pushed, and the live Supabase backend is configured and verified. A reviewer-accessible frontend deployment and complete live checks are required before finalizing.' : 'Deployment status: this is a draft. The local demo is not a cloud guest account and does not satisfy the live hosting requirement. Configure Supabase, publish the owner repository, deploy the app and verify the actual URLs before submitting.' : 'Deployment status: the account-owned HTTPS frontend and live Supabase backend passed automated browser/SDK acceptance checks. The live app does not require the reviewer to sign in to a hosting account.',
     ...(config.deploymentNotes ? [String(config.deploymentNotes)] : []),
   ]],
   ['Access links', [
-    `Live frontend: ${config.liveUrl || '[PENDING — add the actual deployed HTTPS app URL]'}`,
-    `GitHub repository: ${config.repositoryUrl || '[PENDING — add the actual repository URL]'}`,
-    'The repository may be private and shared directly with the reviewer. The assessment PDF and final submission link must not be publicly distributed. No Supabase admin credentials are included.',
+    `Primary live frontend (Netlify Free — fully functioning website): ${config.liveUrl || '[PENDING — add the actual deployed HTTPS app URL]'}`,
+    ...(config.additionalDemoUrl ? [`Additional live demo (GitHub Pages — fully functioning website): ${config.additionalDemoUrl}`] : []),
+    `GitHub source repository (public — complete source code): ${config.repositoryUrl || '[PENDING — add the actual repository URL]'}`,
+    'The primary Netlify site and public source repository can be opened by a reviewer without a hosting login or repository invitation. The GitHub Pages website is an additional functioning demo. Each domain creates its own browser-held anonymous guest session; tasks from a guest on one domain do not automatically appear on the other. The confidential assessment PDF and final submission document/link are not published, and no Supabase admin credentials are included.',
   ]],
   ['Core implementation and guest privacy', [
     'The tasks table contains UUID id, required title, checked status, guest user_id, automatic created_at, updated_at, description, priority, due_date, optional assignee_id and persisted position.',
@@ -57,11 +59,12 @@ const sections = [
   ]],
   ['Local setup and deployment', [
     'Prerequisites: Node.js 22.12+ (Node 24 LTS recommended) and npm. Python is not an application runtime dependency.',
-    `Obtain the source repository with access to ${config.repositoryUrl || 'the supplied GitHub repository'}. Run git clone ${config.repositoryUrl || 'YOUR_REPOSITORY_URL'}, then cd orbit-task-board.`,
+    `Clone the public source: git clone ${config.repositoryUrl || 'YOUR_REPOSITORY_URL'}, then cd orbit-task-board. No repository invitation is needed.`,
     'Install: npm ci. Start: npm run dev. Open http://127.0.0.1:5173. With no Supabase variables, the app shows an explicitly labeled local demo with browser-only persistence.',
     'Cloud setup: create a free Supabase project; enable Anonymous Sign-Ins; execute the full SQL schema below once in the SQL Editor; verify RLS and the Realtime publication.',
     'Copy .env.example to .env.local. Set VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY to the project URL and PUBLIC publishable (or legacy anon) key. Never supply a service-role or sb_secret_ key. Restart the dev server after changes.',
-    'Build for a root-domain host: npm run build; preview: npm run preview. The deployed GitHub Pages project uses npm run build -- --base=/orbit-task-board-demo/. Publish only dist contents to the separate public assets repository; GitHub Pages serves its main branch. Both public Supabase variables must be present at build time. No confidential assessment, local environment file or private document belongs in that repository.',
+    'Primary Netlify deployment: npm run build produces the root-path dist folder; npm run preview serves that build locally. Both public Supabase variables must be present at build time. The account-owned Netlify site uses the supplied netlify.toml configuration and deploys only the audited dist output, with security headers and public production access. This deployment is a manual CLI upload, not a claim that source pushes automatically redeploy. Keep the team on Free with paid trials/automatic top-ups disabled.',
+    'The additional GitHub Pages website uses npm run build -- --base=/orbit-task-board-demo/ and publishes only the built assets plus .nojekyll to its separate hosting repository. No confidential PDF, private handoff document, local environment file or privileged key belongs in either deployment. The canonical Supabase Site URL is Netlify; the additional demo and localhost origins are retained as allowed URLs.',
     'Verification: npm run check; install Chromium with npx playwright install chromium, then npm run test:e2e. Demo browser tests start their own isolated server on port 5180 and never reuse the cloud-connected development server. Hosted tests are separate, use only public-key anonymous sessions and remove their temporary application records.',
   ]],
   ['Verification scope', [
@@ -69,8 +72,8 @@ const sections = [
     'Playwright covers desktop and mobile CRUD, comments, history, assignments, multiple labels, filters, list view, persistence, separate local guest contexts and narrow layouts. Desktop tests exercise cross-column pointer dragging, same-column reorder and keyboard shortcuts. Selected screens are checked with axe for WCAG A/AA violations.',
     'Local PostgreSQL tests use PGlite with a minimal Supabase auth.uid() stub. They do not independently verify the external Supabase auth service, project setup, Realtime delivery or hosted deployment.',
     ...(cloudVerified ? ['Additional live Supabase SDK verification passed: two real anonymous sessions, session restoration and refresh persistence, all six RLS-protected tables, ownership spoofing denial, cross-guest assignment/label/comment rejection, atomic rollback, immutable activity, comment persistence and Realtime delivery. Separate browser acceptance passed on the actual HTTPS frontend for all seven advanced categories, combined filters, due badges/stats, actual pointer cross-column moves and reordering after reload, and same-guest cross-tab updates. Temporary application test records were removed.'] : []),
-    'Final regression results: 48 unit/database tests passed (18 execute real PostgreSQL schema/roles); 20 browser tests passed with 4 intentionally skipped mobile-profile physical keyboard/mouse scenarios. The repaired append/reorder and outside-board cancellation scenarios also passed 10 repeated targeted runs without retries. GitHub Linux CI and the Pages deployment passed. Dependency audit reported zero known vulnerabilities at verification time.',
-    'Production smoke passed: assets loaded without page/network errors, selected axe WCAG A/AA checks passed, and measured 360/768/1024/1440px layouts had no page-level horizontal overflow. These automated results do not certify every assistive technology or physical mobile touch gesture. Before sharing, inspect the final document/links and confirm the free Supabase project remains active.',
+    'Verification rerun for the hosting handoff: all 48 unit/database/collision tests passed (18 execute real PostgreSQL schema/roles), and 20 browser scenarios passed with 4 intentionally skipped mobile-profile physical keyboard/mouse scenarios. Local parallel worker startup and 30-second scan budgets timed out on this machine; the complete suites then passed serially with a 90-second browser scenario budget, zero retries and unchanged assertions. Earlier targeted append/reorder/cancel repetitions and GitHub Linux CI also passed. Dependency audit reported zero known vulnerabilities at the handoff check.',
+    'Hosted acceptance passed on both the primary Netlify frontend and the additional GitHub Pages website: automatic guest sign-in, independent guests, reload persistence, roster/assignment/avatars, comments/timeline, multiple labels, urgency indicators, combined filters, summary counts, actual pointer moves/reorder and same-guest cross-tab Realtime. Production security headers are enabled on Netlify. Selected automated accessibility and responsive checks supplement, but do not certify, every assistive technology or physical mobile touch gesture. Before sharing, inspect the document/links and confirm the free Supabase project remains active.',
   ]],
   ['Tradeoffs and future improvements', [
     'Single personal board and one assignee per task keep scope intentional. Add organizations, shared roles, invitations, multi-assignee support and account upgrade/recovery with a deliberately redesigned security model.',
@@ -81,6 +84,13 @@ const sections = [
   ]],
 ];
 
+function hyperlinkFor(text) {
+  if (text.startsWith('Primary live frontend')) return config.liveUrl;
+  if (text.startsWith('Additional live demo')) return config.additionalDemoUrl;
+  if (text.startsWith('GitHub source repository')) return config.repositoryUrl;
+  return null;
+}
+
 const paragraphs = [
   new Paragraph({ text: 'ORBIT', heading: HeadingLevel.TITLE }),
   new Paragraph({ text: 'Task Manager Assessment', heading: HeadingLevel.SUBTITLE }),
@@ -90,7 +100,7 @@ const paragraphs = [
 for (const [heading, content] of sections) {
   paragraphs.push(new Paragraph({ text: heading, heading: HeadingLevel.HEADING_1 }));
   for (const text of content) {
-    const url = text.startsWith('Live frontend:') ? config.liveUrl : text.startsWith('GitHub repository:') ? config.repositoryUrl : null;
+    const url = hyperlinkFor(text);
     paragraphs.push(new Paragraph({ children: url ? [new ExternalHyperlink({ link: url, children: [new TextRun({ text, style: 'Hyperlink' })] })] : [new TextRun(text)], spacing: { after: 150, line: 285 } }));
   }
 }
@@ -133,7 +143,7 @@ const heading = (text) => {
 for (const [title, content] of sections) {
   heading(title);
   for (const text of content) {
-    const url = text.startsWith('Live frontend:') ? config.liveUrl : text.startsWith('GitHub repository:') ? config.repositoryUrl : null;
+    const url = hyperlinkFor(text);
     pdf.font('Body').fontSize(10).fillColor(url ? '#6d54a5' : '#454a5a').text(text, { lineGap: 3, link: url || undefined });
     pdf.moveDown(.65);
   }
