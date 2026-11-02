@@ -7,9 +7,18 @@ async function dragVisibleHandle(page: Page, source: Locator, target: Locator, t
   // raw mouse coordinates can select text instead of ever starting a drag.
   await source.scrollIntoViewIfNeeded();
   await target.scrollIntoViewIfNeeded();
+  const viewport = page.viewportSize()!;
+  const sourceBeforeScroll = await source.boundingBox();
+  const targetBeforeScroll = await target.boundingBox();
+  expect(sourceBeforeScroll).not.toBeNull();
+  expect(targetBeforeScroll).not.toBeNull();
+  // Keep the entire gesture away from the viewport's auto-scroll edges.
+  // Otherwise the board moves while raw target coordinates stay unchanged.
+  const top = Math.min(sourceBeforeScroll!.y, targetBeforeScroll!.y);
+  const bottom = Math.max(sourceBeforeScroll!.y + sourceBeforeScroll!.height, targetBeforeScroll!.y + targetBeforeScroll!.height);
+  await page.evaluate((offset) => window.scrollBy(0, offset), (top + bottom) / 2 - viewport.height / 2);
   const from = await source.boundingBox();
   const to = await target.boundingBox();
-  const viewport = page.viewportSize()!;
   expect(from).not.toBeNull();
   expect(to).not.toBeNull();
   const start = { x: from!.x + from!.width / 2, y: from!.y + from!.height / 2 };
@@ -130,8 +139,9 @@ test('drags between columns and persists a within-column reorder', async ({ page
   await ready(page);
   const source = page.getByRole('button', { name: 'Drag Explore a fresh visual direction', exact: true });
   const target = page.getByTestId('column-done').locator('.add-task-button');
-  await dragVisibleHandle(page, source, target);
+  await dragVisibleHandle(page, source, target, 'Over Done.');
   await expect(page.getByTestId('column-done').getByRole('button', { name: 'Open task: Explore a fresh visual direction', exact: true })).toBeVisible();
+  await expect(page.getByTestId('column-done').getByTestId('task-card').last()).toContainText('Explore a fresh visual direction');
   await page.reload();
   await expect(page.getByTestId('column-done').getByRole('button', { name: 'Open task: Explore a fresh visual direction', exact: true })).toBeVisible();
   const drag = page.getByRole('button', { name: 'Drag Explore a fresh visual direction', exact: true });
@@ -140,6 +150,18 @@ test('drags between columns and persists a within-column reorder', async ({ page
   await expect(page.getByTestId('column-done').getByTestId('task-card').first()).toContainText('Explore a fresh visual direction');
   await page.reload();
   await expect(page.getByTestId('column-done').getByTestId('task-card').first()).toContainText('Explore a fresh visual direction');
+});
+
+test('dropping outside the board cancels without changing status or order', async ({ page, isMobile }) => {
+  test.skip(isMobile, 'Mouse-pointer cancellation is verified on desktop.');
+  await ready(page);
+  const before = await page.getByTestId('column-todo').getByTestId('task-card').allTextContents();
+  await dragVisibleHandle(page, page.getByRole('button', { name: 'Drag Explore a fresh visual direction', exact: true }), page.getByRole('textbox', { name: 'Search tasks' }), 'Outside the board.');
+  await expect(page.getByTestId('column-todo').getByTestId('task-card')).toHaveCount(3);
+  expect(await page.getByTestId('column-todo').getByTestId('task-card').allTextContents()).toEqual(before);
+  await page.reload();
+  await expect(page.getByRole('button', { name: /^New task/ })).toBeEnabled();
+  expect(await page.getByTestId('column-todo').getByTestId('task-card').allTextContents()).toEqual(before);
 });
 
 test('has no page-level horizontal overflow and works at narrow widths', async ({ page }) => {

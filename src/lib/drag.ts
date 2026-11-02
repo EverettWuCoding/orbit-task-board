@@ -1,6 +1,18 @@
-import type { KeyboardCoordinateGetter } from '@dnd-kit/core';
+import { closestCorners, pointerWithin } from '@dnd-kit/core';
+import type { CollisionDetection, KeyboardCoordinateGetter } from '@dnd-kit/core';
 import { STATUSES } from './types';
 import type { Status, Task } from './types';
+
+// Pointer drops must target what is actually under the pointer. Closest-corner
+// matching can choose a nearby card even in a column's blank append area, or
+// move a task when released outside the board. Prefer a nested card over its
+// containing column; retain geometry-based navigation for keyboard sensors.
+export const boardCollisionDetection: CollisionDetection = (args) => {
+  if (!args.pointerCoordinates) return closestCorners(args);
+  const hits = pointerWithin(args);
+  const cards = hits.filter((hit) => !STATUSES.includes(String(hit.id) as Status));
+  return cards.length ? cards : hits;
+};
 
 // The generic sortable getter includes parent-column droppables and fractional
 // offsets from sibling transforms. Give a Kanban keyboard logical column/row

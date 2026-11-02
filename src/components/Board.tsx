@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { DndContext, DragOverlay, PointerSensor, KeyboardSensor, useSensor, useSensors, closestCorners, useDroppable } from '@dnd-kit/core';
+import { DndContext, DragOverlay, PointerSensor, KeyboardSensor, useSensor, useSensors, useDroppable } from '@dnd-kit/core';
 import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Plus, Sparkles, Inbox, ArrowRight } from 'lucide-react';
@@ -9,7 +9,7 @@ import type { BoardState } from '../hooks/useBoard';
 import { TaskCard } from './TaskCard';
 import { Avatar, EmptyState } from './Primitives';
 import { dueInfo, readableColor, statusTitle } from '../lib/domain';
-import { boardKeyboardCoordinates } from '../lib/drag';
+import { boardCollisionDetection, boardKeyboardCoordinates } from '../lib/drag';
 
 function Column({ column, tasks, allCount, board, onOpen, onCreate }: {
   column: typeof COLUMNS[number]; tasks: Task[]; allCount: number; board: BoardState; onOpen: (id: string) => void; onCreate: (status: Status) => void;
@@ -36,7 +36,7 @@ export function KanbanBoard({ tasks, board, onOpen, onCreate }: { tasks: Task[];
     const target = STATUSES.includes(overId as Status) ? overId as Status : board.tasks.find((task) => task.id === overId)?.status;
     if (target) void board.moveTask(String(event.active.id), target, STATUSES.includes(overId as Status) ? undefined : overId).catch(() => {});
   };
-  return <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={start} onDragEnd={end} onDragCancel={() => setActive(null)}
+  return <DndContext sensors={sensors} collisionDetection={boardCollisionDetection} onDragStart={start} onDragEnd={end} onDragCancel={() => setActive(null)}
     accessibility={{ screenReaderInstructions: { draggable: 'Press Space to pick up a task. Use arrow keys to move between tasks and columns. Press Space to drop, or Escape to cancel. You can also change status in task details.' },
       announcements: {
         onDragStart: ({ active: item }) => `Picked up ${board.tasks.find((task) => task.id === item.id)?.title ?? 'task'}.`,
