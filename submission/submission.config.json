@@ -1,9 +1,9 @@
 {
   "firstName": "Everett",
   "lastName": "Wu",
-  "liveUrl": "",
+  "liveUrl": "https://everettwucoding.github.io/orbit-task-board-demo/",
   "repositoryUrl": "https://github.com/EverettWuCoding/orbit-task-board",
-  "liveVerified": false,
+  "liveVerified": true,
   "cloudVerified": true,
-  "deploymentNotes": "GitHub is pushed and Supabase is configured and verified. A temporary Vercel deployment was created, but its URL returned HTTP 403 and it expires unless claimed. Permanent hosting and a verified reviewer-accessible HTTPS URL remain pending the owner's Vercel sign-in/claim. Do not submit this draft yet."
+  "deploymentNotes": "The live frontend is hosted free on GitHub Pages under an account-owned github.io URL; no purchased domain is required. The full source repository remains private. A separate public repository contains only compiled website assets, not the confidential assessment or submission documents. Hosted guest isolation, refresh persistence, all seven advanced-feature categories, actual pointer moves/reordering and same-guest Realtime were verified after the fixes."
 }

@@ -4,7 +4,7 @@ A responsive Kanban workspace built with React, TypeScript, Vite, and Supabase. 
 
 **GitHub and Supabase are connected and verified.** The code is pushed to the private [EverettWuCoding/orbit-task-board repository](https://github.com/EverettWuCoding/orbit-task-board). A dedicated free Supabase project is provisioned, with anonymous Auth, RLS, transactional RPCs and Realtime checked against the actual hosted database. This workspace's ignored local environment file connects the frontend to it; a fresh clone without config remains a local demo.
 
-**Permanent frontend hosting remains pending owner authorization.** A temporary Vercel deployment was created but returned HTTP 403 during public verification and expires unless claimed. It is not a usable final submission URL. See [docs/CLOUD_HANDOFF.md](docs/CLOUD_HANDOFF.md). No final document should be submitted until the permanent HTTPS frontend is verified.
+**Live frontend: https://everettwucoding.github.io/orbit-task-board-demo/** — free account-owned GitHub Pages hosting, HTTPS enforced, no purchased domain and no temporary-deployment expiry. The actual hosted UI passed guest isolation, persistence, all seven advanced categories, pointer append/reorder and cross-tab Realtime acceptance. Only compiled assets are public; the source repository and private handoff documents remain separate. See [docs/CLOUD_HANDOFF.md](docs/CLOUD_HANDOFF.md).
 
 ## Start locally
 
@@ -50,9 +50,9 @@ For the required cloud-backed version, follow [docs/SETUP.md](docs/SETUP.md). Co
 | `npm run verify:supabase` | Real hosted backend checks using two anonymous clients and public key; cleans temporary test rows |
 | `npm run verify:cloud-browser` | Real browser guest/persistence/Realtime checks; optional frontend URL argument |
 | `npm run check` | Lint, unit/database tests, and production build |
-| `npm run submission` | Generate a PDF and editable Word submission draft |
+| `npm run submission` | Generate the named PDF and editable Word submission; draft safeguards apply if verification/config is incomplete |
 
-Before browser tests, install Chromium with `npx playwright install chromium`. End-to-end tests explicitly use local-demo environment variables. If reusing a running server, it must also be in demo mode; stop a cloud-configured server before these tests. Tests do not write to a production Supabase database.
+Before browser tests, install Chromium with `npx playwright install chromium`. End-to-end tests always start an isolated local-demo server on port 5180 and never reuse the cloud-connected development server on port 5173. Demo tests do not write to Supabase. The separate explicit live-verification scripts create/remove their own temporary guest-owned test records.
 
 ## Structure
 
@@ -70,12 +70,14 @@ Before browser tests, install Chromium with `npx playwright install chromium`. E
 
 ## Verification and limitations
 
-See [docs/VERIFICATION.md](docs/VERIFICATION.md) for the tested scope. PostgreSQL ownership/transaction tests run locally with a minimal `auth.uid()` implementation; separately, the hosted Supabase SDK and real-browser checks now confirm anonymous auth, actual RLS isolation, cloud persistence and Realtime. **Permanent frontend deployment is not yet verified.**
+The original PDF has been audited bullet by bullet in [docs/REQUIREMENTS.md](docs/REQUIREMENTS.md). Remaining owner submission actions and optional feature/quality work are in [docs/REMAINING_WORK.md](docs/REMAINING_WORK.md). All seven advanced categories are present, with one assignee per task; multiple simultaneous assignees are not implemented.
+
+See [docs/VERIFICATION.md](docs/VERIFICATION.md) for the tested scope. The final rerun passed **48 unit/database tests, 20 browser tests (4 deliberately skipped mobile physical-input cases), hosted advanced-feature/pointer workflows, live Supabase isolation and production smoke checks**. Both GitHub Linux CI for the application fix and the updated Pages deployment passed. Physical-phone touch gestures and comprehensive assistive-technology certification are not claimed.
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for design decisions and tradeoffs. This is a single-board, personal guest workspace. Clearing browser auth storage loses access to an anonymous guest's cloud data. No account-recovery or shared team permissions are claimed.
 
 ## Deployment and submission
 
-Follow [docs/CLOUD_HANDOFF.md](docs/CLOUD_HANDOFF.md) for the current account-dependent hosting step, and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for free-tier deployment instructions. The submission config already includes Everett Wu and the actual private GitHub URL. Add the **permanent verified frontend URL**, then run `npm run submission`. Both PDF and Word files contain the full SQL schema and remain marked **DRAFT** until the live URL and verification are complete.
+The submission config includes Everett Wu, the actual private source GitHub URL and the verified live Pages URL. `npm run submission` generates both named formats with the full SQL schema and current setup/features/tradeoffs. Submit **one** finished document after inspecting it; Google Drive upload, reviewer permissions and the actual invitation's Google Form are owner handoff steps and have not been performed. See [docs/CLOUD_HANDOFF.md](docs/CLOUD_HANDOFF.md) and [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 **Confidentiality:** the supplied assessment PDF is ignored by Git, as are generated PDFs/Word files and local environment files. Do not upload the assessment PDF, publish the final submission document/link on public profiles, or expose a Supabase service-role/secret key. Only the public publishable or legacy anon key belongs in the browser. Use a private GitHub repository if preferred and share it directly with the reviewer.

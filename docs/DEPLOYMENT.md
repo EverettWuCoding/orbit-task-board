@@ -1,6 +1,10 @@
 # GitHub, free hosting, and assessment handoff
 
-Nothing in this project automatically publishes code, creates paid resources, or uploads the supplied PDF. Account login and actual resource creation must be completed by the owner.
+The current working deployment is **https://everettwucoding.github.io/orbit-task-board-demo/** on free GitHub Pages, with a separate public compiled-assets repository and private full source. No purchased domain is needed. The setup alternatives below remain valid but Vercel/Netlify login is not required for the existing deployment. No confidential assessment or private submission document is published.
+
+## Current GitHub Pages deployment
+
+The assets-only repository is https://github.com/EverettWuCoding/orbit-task-board-demo. Pages publishes its `main` branch root over enforced HTTPS. Build the private source with both public Supabase variables and `npm run build -- --base=/orbit-task-board-demo/`; deploy only the output plus `.nojekyll`. Preserve the subpath-aware home link. After changes, run hosted acceptance and inspect the Pages deployment, not just source CI. See [CLOUD_HANDOFF.md](CLOUD_HANDOFF.md) for verified results and maintenance limits.
 
 ## GitHub
 

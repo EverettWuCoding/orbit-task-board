@@ -1,47 +1,44 @@
-# Cloud setup completed and remaining owner action
+# Verified live app and submission handoff
 
-## Completed
+## Working URLs and completed setup
 
-- **GitHub:** https://github.com/EverettWuCoding/orbit-task-board — private repository, `main` branch, source pushed. No assessment PDF, generated Word/PDF, local credentials or service-role key was committed.
-- **Supabase:** https://supabase.com/dashboard/project/ajozwyvyhzrytdhbcttc — dedicated `orbit-task-board` nano project in the new `Orbit Assessment` organization. Existing projects were not modified. The new organization/project used the free defaults; no paid addon was selected.
-- **Database:** full migration executed; all six tables have RLS; owner-aware foreign keys, transactional saves/moves and trigger-generated history installed; all six tables published for Realtime.
-- **Authentication:** anonymous sign-in enabled; the project's original hosted email-confirmation and TOTP security defaults preserved. Current CLI config sync reports all declared services up to date.
-- **Frontend connection:** this workspace's ignored local environment file contains only the project URL and public anon key. Local app at http://127.0.0.1:5173 now connects to the real cloud database, not demo storage.
-- **Live SDK checks:** independent anonymous guests, restored sessions, private reads/writes, rejected ownership spoofing and cross-guest member/label/comment links, transactional rollback, unforgeable activity, comments, move persistence and Realtime verified.
-- **Live browser checks:** separate browser guests, reload persistence, task status/comments/history and same-guest cross-tab Realtime verified. Test task/member/label/comment rows removed afterward. Anonymous test accounts are harmless remaining auth records; no unrelated account/data cleanup was performed.
-- **CI:** first GitHub Actions run passed: https://github.com/EverettWuCoding/orbit-task-board/actions/runs/41339845836. Subsequent commits trigger the same pipeline.
-- **Documents:** author/repository supplied; generator records backend verification while retaining a DRAFT marker until permanent frontend hosting is usable.
+- **Live frontend:** https://everettwucoding.github.io/orbit-task-board-demo/ — account-owned GitHub Pages project site, public HTTPS, free GitHub subdomain. No domain purchase, Vercel account, bypass token or one-hour expiry is involved.
+- **Full source:** https://github.com/EverettWuCoding/orbit-task-board — private repository on `main`; code, migrations, tests and documentation are pushed. Confidential assessment, generated handoff documents and local credentials are excluded.
+- **Assets-only host:** https://github.com/EverettWuCoding/orbit-task-board-demo — public `.nojekyll`, HTML, favicon and compiled JS/CSS only. No assessment PDF, submission document/link, private environment file, SQL source or privileged key.
+- **Supabase:** https://supabase.com/dashboard/project/ajozwyvyhzrytdhbcttc — dedicated nano project in the separate `Orbit Assessment` organization. Existing projects unchanged; no paid addon selected.
+- **Database/auth:** six owner-RLS tables, required task fields, same-owner foreign keys, atomic save/move RPCs and server history; anonymous Auth and Realtime enabled. Site URL points to Pages, with localhost allowed for development.
+- **Hosted acceptance:** independent guests, session/reload persistence, all seven advanced categories, saved comments/history, combined filters, urgency/stats, actual cross-column pointer moves, column-whitespace appends, persisted same-column reorder and same-guest cross-tab Realtime passed. Temporary application rows removed; test Auth identities may remain.
 
-## Blocked: permanently owned free frontend hosting
+## Failure notification: fixed and independently verified
 
-Neither Vercel nor Netlify was authenticated. A Vercel browser/device login was started but not approved before it expired.
+The original CI pointer test measured a grip outside a 720px viewport and selected page text instead of picking up the task. The repaired test scrolls/centers the full gesture, checks real pickup/announcements and keeps the original strict order/reload assertions. Demo tests now have their own port 5180 server, separate from the cloud dev app.
 
-A **temporary** prebuilt deployment was created at https://prompt-aurora-vw4wf1w.tmp.now. Vercel reported an expiry of about 57 minutes at creation. Both the integrated browser and independent HTTP client received **403 Forbidden**, so this is **not a verified reviewer-accessible live app** and must not be treated as the final URL. The private claim page was opened for the owner; its capability-bearing claim link is intentionally **not recorded in source, docs or GitHub**.
+Extended hosted coverage also found a genuine append-area issue: generic nearest-corner detection could target a nearby card instead of blank column space. Pointer hit testing now prefers the card actually under the pointer, otherwise its column; outside-board releases cancel. Keyboard geometry navigation is preserved. Six direct collision regressions and explicit append/outside-board browser checks cover this fix.
 
-### Owner action required
+- Application-fix Linux CI: https://github.com/EverettWuCoding/orbit-task-board/actions/runs/41400882418 — **success**.
+- Updated compiled Pages deployment: https://github.com/EverettWuCoding/orbit-task-board-demo/actions/runs/41400943222 — **success**.
+- Local checks: **48 unit/database passed; 20 browser passed; 4 intentional mobile physical-input skips; 10 targeted append/reorder/cancel repetitions passed without retries; production smoke passed; audit 0 known vulnerabilities**.
 
-1. In the opened Vercel claim page, sign in/create a free Hobby account directly and claim the deployment before it expires. If it already expired, sign in normally and create a new permanent deployment.
-2. Do not share passwords, login codes, private claim URLs, API tokens or admin keys through chat. Complete login/authorization directly in the browser or terminal.
-3. Once logged in, the assistant can link the project, add the two public build variables, deploy to production, connect GitHub for continuous deployment and check the actual HTTPS URL. No paid plan/addon should be enabled.
-4. The hosted app must be available to a fresh unauthenticated visitor, display **Private workspace**, and pass two-browser guest isolation and persistence checks. Disable account-only deployment protection on the **public demo frontend**, not on Supabase data/RLS.
-5. Set Supabase Auth's Site URL to the final HTTPS domain. Keep anonymous sign-in and RLS enabled.
-6. Set `liveUrl` and `liveVerified: true` in the submission config only after those checks. Replace the pending deployment notes and regenerate Everett Wu's PDF/Word file.
-7. Inspect the final PDF and upload it through the assessment's private Drive/Form process. No Drive/Form submission has been performed because the final link is still blocked.
+## Deployment maintenance
 
-## Password and key handling
+Build with both **public** Supabase variables available at build time and `npm run build -- --base=/orbit-task-board-demo/`. Copy only the built frontend to the separate assets repository, preserve `.nojekyll`, remove superseded chunks and push its `main`. Pages deploys automatically. Private-source-to-public-assets continuous deployment is not implemented; pushing source alone does not publish new assets.
 
-The database password was randomly generated, passed to the CLI without being printed, and was not committed or embedded in the app. The owner can reset the database password in Supabase project settings if direct database access is later needed. No password is required by the frontend or public-key verification scripts. The management CLI's existing authenticated account was used without printing its token.
+The earlier anonymous Vercel attempt is historical and unusable. Do not put its temporary URL or private claim link in the final document. Use the verified Pages URL above.
 
-Supabase security-advisor warnings:
+## Remaining owner handoff
 
-- **Anonymous access policies:** expected for this assessment's required anonymous Auth users. Each policy still checks `auth.uid() = user_id`; unauthenticated public clients and other guests were blocked in actual live tests.
-- **Leaked password protection disabled:** the app has no password sign-in flow. No paid feature was enabled to silence this warning.
+1. Personally open the live app and named generated PDF; confirm the name, links, feature descriptions, readable SQL and intended review access.
+2. Select **one** final PDF or Word document. The named PDF is the primary option.
+3. Use the actual invitation's Google Form and Drive-sharing instructions. Their URL/permission specifics are not in the assessment PDF and must not be invented.
+4. Upload the finished solution document only, grant the requested reviewer-readable permissions, test the Drive link and submit the Form. Preserve confirmation. No Drive/Form submission has been performed.
+5. Keep the assessment PDF and final document/submission link off public profiles/social sites. Sharing the working demo and public compiled website is distinct from publishing the private submission document.
 
-## Re-run verification
+The existing named PDF/Word files are regenerated with live URL, full SQL, setup, all seven advanced categories and tradeoffs. There is no pending hosting feature or required board implementation gap; final private delivery and the owner's human review remain.
 
-- `npm run verify:supabase` checks the dedicated live backend using its public key and two ephemeral anonymous sessions.
-- `npm run verify:cloud-browser` checks the local frontend-to-live-backend path. Pass a verified permanent HTTPS frontend URL as its argument to repeat after hosting.
-- `npm run check` runs lint, 42 unit/database tests and the production build.
-- Existing local-demo E2E tests require a demo-configured server. Stop a cloud-configured dev server before running them; the CI server explicitly uses demo variables and no production credentials.
+## Limits to keep explicit
 
-The deployment upload ignore files exclude the confidential PDF, local environment files, generated private documents, source database metadata and non-build assets. The prebuilt upload contains only the compiled frontend and security-header config.
+- One assignee per task (covers the PDF's one-or-more minimum), colored initial avatars, personal roster rather than authenticated shared coworkers. No uploaded photo, multi-assignee, account recovery or invitations are claimed.
+- Automated mobile layout/form and keyboard/mouse checks are not a physical iOS/Android gesture or comprehensive screen-reader certification.
+- Free Supabase projects can pause with inactivity. Check health before review; do not clear a guest's browser Auth storage unless intentionally abandoning access.
+- Keep RLS enabled. Anonymous-policy advisor warnings are expected for required owner-scoped anonymous Auth; unused password protection is not a reason to buy paid features.
+- Database passwords, management/access tokens, service-role keys and claim links are not needed by the frontend and must never be published. The public anon key is intentionally browser-visible and protected by RLS.

@@ -6,21 +6,22 @@
 
 - ESLint: **passed**, no errors or warnings.
 - Strict TypeScript and Vite production build: **passed**, split vendor chunks and no oversized-chunk warning.
-- Unit/repository/hook/PostgreSQL suite: **42 passed**, including **18 actual database tests**.
-- Chromium desktop/mobile suite: **19 passed**, **3 intentionally skipped** mobile-profile physical keyboard/pointer scenarios. No failures.
+- Unit/repository/hook/PostgreSQL/collision suite: **48 passed**, including **18 actual database tests** and **6 direct nested-drag collision regressions**.
+- Chromium desktop/mobile suite: **20 passed**, **4 intentionally skipped** mobile-profile physical keyboard/pointer scenarios. No failures; final local full run used zero retries.
+- Targeted append/reorder and outside-board cancellation stress: **10 passed** (five of each), without retries. The original off-viewport gesture was reproduced before fixing; assertions were preserved/strengthened, not skipped.
 - Axe checks: **passed** on board, task creation dialog and quick guide in both browser profiles; the built desktop board also passed.
 - Production-bundle smoke: **passed** with no page runtime/network failures; measured **360, 768, 1024 and 1440px** layouts without page-level horizontal overflow; mobile creation/status and refresh persistence verified.
 - Dependency audit: **0 known vulnerabilities** across installed runtime and development dependencies at the time of verification.
-- Submission generation: **7-page draft PDF** and editable Word file generated. Independently parsed both documents and verified that the **complete SQL migration** is present, including its final `commit;`.
-- Local Git repository initialized on `main`; assessment PDF, local env files, Python environment and generated private PDF/Word documents confirmed ignored. No remote was created and nothing was published.
+- Submission generation: **named 7-page final PDF and editable Word file regenerated and validated**. Both contain full migration SQL, all required sections, real clickable live/source links and no DRAFT/PENDING markers. Representative rendered pages and page-bound checks passed. Private Drive/Form delivery remains an owner action.
+- Private GitHub repository pushed on `main`; assessment PDF, local env files, Python environment and generated private PDF/Word documents confirmed ignored and absent from Git history's file paths.
 
 ### Follow-up cloud verification
 
-The private GitHub repository is now pushed, and a dedicated free Supabase project is connected. Live SDK and real-browser tests passed for anonymous guest separation, session restoration/reload, all six owned tables, cross-guest adversarial operations, atomic rollback, comments, trigger history and Realtime/cross-tab delivery. First GitHub CI run passed. See [CLOUD_HANDOFF.md](CLOUD_HANDOFF.md) for the actual resources and remaining authorization step.
+The private GitHub repository is pushed, and a dedicated free Supabase project is connected. After the regression fixes, live SDK and actual HTTPS browser checks passed for anonymous guest separation, session/reload, all six owned tables, cross-guest adversarial operations, atomic rollback, all seven advanced categories and Realtime/cross-tab delivery. Actual pointer cross-column moves, blank-column appends and same-column reorder persist after reload. Temporary application test data was removed. Application fix [8a95f27 passed Linux CI](https://github.com/EverettWuCoding/orbit-task-board/actions/runs/41400882418); the [updated Pages deployment](https://github.com/EverettWuCoding/orbit-task-board-demo/actions/runs/41400943222) also passed. See [CLOUD_HANDOFF.md](CLOUD_HANDOFF.md).
 
-The temporary frontend deployment returned HTTP 403 and expires unless claimed. **Permanent HTTPS frontend hosting and the final Drive/Form handoff remain unverified/incomplete.**
+**Verified live frontend: https://everettwucoding.github.io/orbit-task-board-demo/** — free account-owned HTTPS Pages site, not the old expiring Vercel URL. Hosting and hosted acceptance are complete; **private Google Drive/Form submission has not been performed**. The full PDF-derived checklist is [REQUIREMENTS.md](REQUIREMENTS.md); remaining owner/optional work is [REMAINING_WORK.md](REMAINING_WORK.md).
 
-Run `npm run check` and `npm run test:e2e` from the root. Chromium installation is a one-time prerequisite. Browser tests deliberately run in **local demo** mode and never exercise a production database.
+Run `npm run check` and `npm run test:e2e` from the root. Chromium installation is a one-time prerequisite. Browser tests deliberately run in **local demo** mode on their own port 5180 and never reuse a cloud-configured development server. Explicit live verification scripts are separate and clean temporary application records.
 
 Tests include:
 
@@ -39,22 +40,24 @@ Tests include:
 
 The browser project intentionally skips physical-keyboard/pointer-specific scenarios on its mobile profile. This is not a claim of tested physical mobile gestures. Verify touch dragging on actual iOS/Android devices before claiming device coverage.
 
-## Live acceptance checklist — not completed by local tests
+## Live backend checklist — completed separately from local tests
 
-The owner must complete these after configuring the external services:
+These boxes are backed by separate live SDK/browser evidence, not merely the local PGlite tests. During the requirements audit, project health, live column types and six-table RLS were rechecked without creating new test data.
 
 ### Database and anonymous auth
 
-- [ ] Supabase free project exists and is healthy/unpaused.
-- [ ] Complete migration ran without error; RLS enabled on all six tables.
-- [ ] Anonymous Sign-Ins enabled; application uses only a public publishable/anon key.
-- [ ] Hosted app shows “Private workspace,” not “Local demo.”
-- [ ] Guest A creates a task, refreshes, and retains both task and guest identifier.
-- [ ] A different browser/incognito guest B starts with its own empty board.
-- [ ] Neither guest can see or change the other guest's tasks or related records.
-- [ ] Status and position survive refresh after dragging.
-- [ ] Members, tags, comments and database activity survive refresh.
-- [ ] Same-guest tabs receive Realtime updates; different guests do not receive private task contents.
+- [x] Supabase dedicated free/default nano project exists and is healthy/unpaused. Owner billing/host plan confirmation still listed in the remaining-work checklist.
+- [x] Complete migration ran without error; RLS enabled on all six tables.
+- [x] Anonymous Sign-Ins enabled; application uses only a public publishable/anon key.
+- [x] Local frontend connected to real Supabase shows “Private workspace,” not “Local demo.”
+- [x] Guest A creates a task, refreshes, and retains both task and guest identifier through the local frontend/cloud backend.
+- [x] A different browser guest B starts with its own empty board.
+- [x] Neither guest can see/change the other's tasks; live adversarial link/ownership checks passed.
+- [x] Move RPC saves actual status/position; local and actual hosted pointer append/reorder tests verify on-drop persistence. Keyboard navigation is separately desktop-tested.
+- [x] Cloud member/label links, comments and trigger-generated activity persisted/read back; browser task/comment/activity reload verified.
+- [x] Same-guest tabs receive Realtime updates; guest ownership enforced in live reads and RLS.
+- [x] Repeat guest/feature acceptance on the actual HTTPS frontend, including all seven advanced categories and pointer moves/reorder.
+- [ ] Verify physical phone touch drag, not merely mobile form/layout emulation.
 
 ### Live adversarial RLS test
 
@@ -70,18 +73,21 @@ In a **disposable** Supabase project, use two separate authenticated guest clien
 8. Authenticated A attempts direct activity insert/update/delete: denied.
 9. An unauthenticated public client without a user session attempts application reads/RPCs: denied.
 
-Local SQL tests already exercise these database rules with real PostgreSQL roles. The live check additionally confirms the actual project/auth/API configuration. Never disable RLS to make a test pass.
+These live SDK checks were completed with [verify-supabase](../scripts/verify-supabase.mjs), including temporary-record cleanup; no need to redo them from scratch to create the database. Local SQL tests independently exercise the rules with real PostgreSQL roles. Repeat critical guest behavior on the final hosted origin after deployment. Never disable RLS to make a test pass.
 
 ### Hosting, accessibility and handoff
 
-- [ ] GitHub repository contains intended source only; no confidential PDF, secrets or generated private handoff documents in commit history.
-- [ ] Deployment is on a free plan and builds successfully using the lockfile.
-- [ ] HTTPS live URL loads in a fresh browser, with no console/network errors.
-- [ ] Keyboard creation, navigation, focus return, drag/status alternatives and reduced motion work.
+- [x] GitHub repository contains intended source; confidential PDF, local env and generated private documents are ignored and absent from Git history file paths; prior staged secret checks passed.
+- [x] GitHub Pages free public-assets hosting is built successfully; private source CI installs the lockfile and checks the production build.
+- [x] HTTPS live URL loads in fresh browser contexts; hosted smoke passed no page/asset errors and selected axe/360px layout checks.
+- [x] Keyboard creation, drag/status alternatives and dialog initial focus implemented; desktop automated checks passed. Reduced-motion styles provided.
+- [ ] Final manual keyboard/focus/assistive-technology review on hosted domain; ARIA tab-pattern improvements are optional backlog, not certified complete.
 - [ ] Actual phone touch drag and form behavior verified; narrow page has no horizontal overflow.
-- [ ] Supabase rate limits/CAPTCHA settings match the implemented anonymous signup flow.
-- [ ] Name, live URL, GitHub URL and confirmed verification supplied in submission config.
-- [ ] Generated PDF opened and inspected; full SQL is present and no DRAFT marker remains.
+- [x] Actual anonymous signup works with current Supabase settings; frontend has no CAPTCHA integration. Do not enable mandatory CAPTCHA without implementing it.
+- [x] Name and actual GitHub URL supplied in submission config.
+- [x] Account-owned Pages live URL and confirmed hosted verification supplied in submission config.
+- [x] Final PDF/Word contents and hyperlinks independently parsed; full SQL present, no draft markers, rendered overview/features/schema/end pages reviewed without clipping.
+- [ ] Owner personally reviews the final named document before uploading.
 - [ ] Final document shared through the requested private Drive/Form process only.
 
 ## Important distinctions
