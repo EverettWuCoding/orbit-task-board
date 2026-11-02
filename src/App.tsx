@@ -51,7 +51,7 @@ function Workspace() {
   }, [canEdit]);
 
   const sidebar = <>
-    <a className="brand" href="/" aria-label="Orbit home"><span className="brand-mark"><Orbit size={25} /></span><span>orbit<span className="brand-period">.</span></span></a>
+    <a className="brand" href={import.meta.env.BASE_URL} aria-label="Orbit home"><span className="brand-mark"><Orbit size={25} /></span><span>orbit<span className="brand-period">.</span></span></a>
     <div className="workspace-switch"><span className="workspace-icon">P</span><div><strong>Personal workspace</strong><span>Your ideas, in motion</span></div><ShieldCheck size={15} /></div>
     <div className="sidebar-section-label">WORKSPACE</div>
     <nav aria-label="Workspace navigation"><button className={`nav-item ${filters.due === 'all' ? 'active' : ''}`} onClick={() => { setFilters(EMPTY_FILTERS); setView('board'); setNavOpen(false); }}><LayoutDashboard size={18} /><span>Project board</span><span className="nav-count">{stats.total}</span></button><button className={`nav-item ${filters.due === 'soon' ? 'active' : ''}`} onClick={() => { setFilters({ ...EMPTY_FILTERS, due: 'soon' }); setNavOpen(false); }}><Clock3 size={18} /><span>Coming up</span></button><button className={`nav-item ${filters.due === 'overdue' ? 'active' : ''}`} onClick={() => { setFilters({ ...EMPTY_FILTERS, due: 'overdue' }); setNavOpen(false); }}><AlertCircle size={18} /><span>Needs attention</span>{stats.overdue > 0 && <span className="attention-count">{stats.overdue}</span>}</button></nav>

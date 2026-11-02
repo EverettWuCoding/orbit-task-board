@@ -2,8 +2,8 @@
 project_id = "orbit-task-board"
 
 [auth]
-site_url = "http://127.0.0.1:5173"
-additional_redirect_urls = ["http://localhost:5173"]
+site_url = "https://everettwucoding.github.io/orbit-task-board-demo/"
+additional_redirect_urls = ["http://127.0.0.1:5173", "http://localhost:5173"]
 jwt_expiry = 3600
 enable_signup = true
 enable_anonymous_sign_ins = true

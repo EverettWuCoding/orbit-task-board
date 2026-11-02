@@ -10,6 +10,7 @@ coverage/
 *.tsbuildinfo
 .vercel/
 .netlify/
+.pages-deploy/
 supabase/.temp/
 supabase/.branches/
 # The supplied assessment is confidential. Never commit it.

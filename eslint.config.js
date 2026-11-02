@@ -5,7 +5,7 @@ import hooks from 'eslint-plugin-react-hooks';
 import refresh from 'eslint-plugin-react-refresh';
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', '.venv', '.vercel', '.netlify', 'supabase/.temp', 'playwright-report', 'test-results'] },
+  { ignores: ['dist', 'node_modules', '.venv', '.vercel', '.netlify', '.pages-deploy', 'supabase/.temp', 'playwright-report', 'test-results'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
