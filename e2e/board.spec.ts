@@ -1,5 +1,35 @@
 import { expect, test } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
+
+async function dragVisibleHandle(page: Page, source: Locator, target: Locator, targetAnnouncement?: string) {
+  await expect(source).toBeEnabled();
+  // boundingBox() does not scroll. Measuring an offscreen grip then sending
+  // raw mouse coordinates can select text instead of ever starting a drag.
+  await source.scrollIntoViewIfNeeded();
+  await target.scrollIntoViewIfNeeded();
+  const from = await source.boundingBox();
+  const to = await target.boundingBox();
+  const viewport = page.viewportSize()!;
+  expect(from).not.toBeNull();
+  expect(to).not.toBeNull();
+  const start = { x: from!.x + from!.width / 2, y: from!.y + from!.height / 2 };
+  const finish = { x: to!.x + to!.width / 2, y: to!.y + to!.height / 2 };
+  for (const point of [start, finish]) {
+    expect(point.x).toBeGreaterThanOrEqual(0);
+    expect(point.x).toBeLessThan(viewport.width);
+    expect(point.y).toBeGreaterThanOrEqual(0);
+    expect(point.y).toBeLessThan(viewport.height);
+  }
+  await page.mouse.move(start.x, start.y);
+  await page.mouse.down();
+  try {
+    await page.mouse.move(start.x - 10, start.y, { steps: 4 });
+    await expect(page.locator('.is-dragging')).toHaveCount(1);
+    await page.mouse.move(finish.x, finish.y, { steps: 20 });
+    if (targetAnnouncement) await expect(page.locator('[id^="DndLiveRegion-"]')).toHaveText(targetAnnouncement);
+  } finally { await page.mouse.up(); }
+  await expect(page.locator('.is-dragging')).toHaveCount(0);
+}
 
 async function ready(page: Page) {
   await page.goto('/');
@@ -100,22 +130,13 @@ test('drags between columns and persists a within-column reorder', async ({ page
   await ready(page);
   const source = page.getByRole('button', { name: 'Drag Explore a fresh visual direction', exact: true });
   const target = page.getByTestId('column-done').locator('.add-task-button');
-  const from = await source.boundingBox(); const to = await target.boundingBox();
-  expect(from).toBeTruthy(); expect(to).toBeTruthy();
-  await page.mouse.move(from!.x + from!.width / 2, from!.y + from!.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(from!.x + 20, from!.y + 20, { steps: 5 });
-  await page.mouse.move(to!.x + to!.width / 2, to!.y + to!.height / 2, { steps: 20 });
-  await page.mouse.up();
+  await dragVisibleHandle(page, source, target);
   await expect(page.getByTestId('column-done').getByRole('button', { name: 'Open task: Explore a fresh visual direction', exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByTestId('column-done').getByRole('button', { name: 'Open task: Explore a fresh visual direction', exact: true })).toBeVisible();
   const drag = page.getByRole('button', { name: 'Drag Explore a fresh visual direction', exact: true });
   const before = page.getByRole('button', { name: 'Drag Define our product principles', exact: true });
-  const a = await drag.boundingBox(); const b = await before.boundingBox();
-  await page.mouse.move(a!.x + 5, a!.y + 5); await page.mouse.down();
-  await page.mouse.move(a!.x + 20, a!.y + 15, { steps: 4 });
-  await page.mouse.move(b!.x + 5, b!.y + 5, { steps: 20 }); await page.mouse.up();
+  await dragVisibleHandle(page, drag, before, 'Over Define our product principles.');
   await expect(page.getByTestId('column-done').getByTestId('task-card').first()).toContainText('Explore a fresh visual direction');
   await page.reload();
   await expect(page.getByTestId('column-done').getByTestId('task-card').first()).toContainText('Explore a fresh visual direction');
